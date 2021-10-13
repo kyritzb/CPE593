@@ -1,6 +1,6 @@
-# CPE593
-Applied Data Structures and Algorithms
+# CPE593 Applied Data Structures and Algorithms
 
-###HW1: Eratosthenes & GCD###
-###HW2: Grow Array (with capacity)###
-###HW3: DoubleLinkedList###
+## Homeworks ##
+1. Eratosthenes & GCD
+2. Grow Array (with capacity)
+3. DoubleLinkedList
