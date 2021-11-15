@@ -135,7 +135,6 @@ public:
         {
             cout << "--------Linked List #" << i + 1 << "--------" << endl;
             LinkedList *list = arr[i];
-
             list->display();
         }
     }
@@ -145,6 +144,56 @@ int main()
 {
     cout << "running" << endl;
     HashMap dict("dict.txt");
-    //dict.display();
+    int choice;
+    while (choice != 0)
+    {
+        cout << "-----------------------------" << endl;
+        cout << "HashMap with linear chaining" << endl;
+        cout << "-----------------------------" << endl;
+        cout << "0) Finish" << endl;
+        cout << "1) Test Word" << endl;
+        cin >> choice;
+        if (choice == 1)
+        {
+            cout << "Enter word: ";
+            string word;
+            cin >> word;
+            bool isWord = dict.isWord(word);
+            if (isWord)
+            {
+                cout << word << " is a word!" << endl;
+            }
+            else
+            {
+                cout << word << " is not a word!" << endl;
+            }
+        }
+    }
+    choice = 1;
+    while (choice != 0)
+    {
+        cout << "-----------------------------" << endl;
+        cout << "             Trie            " << endl;
+        cout << "-----------------------------" << endl;
+        cout << "0) Finish" << endl;
+        cout << "1) Test Word" << endl;
+        cout << "2) Starts with" << endl;
+        cin >> choice;
+        if (choice == 1)
+        {
+            cout << "Enter word: ";
+            string word;
+            cin >> word;
+            bool isWord = dict.isWord(word);
+            if (isWord)
+            {
+                cout << word << " is a word!" << endl;
+            }
+            else
+            {
+                cout << word << " is not a word!" << endl;
+            }
+        }
+    }
     return 0;
 }
