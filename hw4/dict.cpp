@@ -1,18 +1,19 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <cstring>
 
 using namespace std;
-
-struct node
-{
-    string data;
-    node *next;
-};
 
 class LinkedList
 {
 private:
+    struct node
+    {
+        string data;
+        node *next;
+    };
+
     node *head, *tail;
 
 public:
@@ -93,7 +94,6 @@ private:
 public:
     HashMap(string dictionaryFile)
     {
-        cout << "Created new dictionary with " << dictionaryFile << endl;
         // Initial capacity of hash array
         capacity = 30;
         size = 0;
@@ -140,10 +140,229 @@ public:
     }
 };
 
+//can change the type of data in the array
+template <class K>
+class DynArray
+{
+private:
+    K *data;           //dynamic array of whatever type is entered when creating the dynamic array
+    uint32_t capacity; // how big the array is (everytime you run out of space, double it)
+    uint32_t len;      // how many are used
+
+public:
+    DynArray()
+    {
+        data = new K[10]; //initial capacity is set to 10
+        capacity = 10;    //initial capacity is set to 10
+        len = 0;
+    }
+
+    void add(K newNode)
+    {
+        checkGrow();
+        data[len] = newNode;
+        len++;
+    }
+
+    int size()
+    {
+        return len;
+    }
+
+    K get(int index)
+    {
+        return data[index];
+    }
+
+    void print()
+    {
+        for (int i = 0; i < len; i++)
+        {
+            cout << data[i] << ",";
+        }
+        cout << endl;
+        cout << "Capacity: " << capacity << endl;
+        cout << "Length: " << len << endl;
+    }
+
+    //if the array is full, double in size
+    void checkGrow()
+    {
+        if (len == capacity)
+        {
+            int newCapacity = capacity * 2;
+            capacity = newCapacity;
+            //copy contents
+            K *newData = new K[newCapacity];
+            for (int i = 0; i < len; i++)
+            {
+                newData[i] = data[i];
+            }
+            //switch new array with old one
+            data = newData;
+        }
+    }
+};
+
+class Trie
+{
+
+private:
+    class TrieNode
+    {
+    private:
+        DynArray<TrieNode *> *children; //an array nodes
+    public:
+        char data;
+
+        TrieNode(char newData)
+        {
+            data = newData;
+            DynArray<TrieNode *> *newArray = new DynArray<TrieNode *>();
+            children = newArray;
+        }
+        bool hasChild(char searchValue)
+        {
+            for (int i = 0; i < children->size(); i++)
+            {
+                TrieNode *curNode = children->get(i);
+
+                char curChar = curNode->data;
+
+                if (curChar == searchValue)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+        TrieNode *getChild(char searchValue)
+        {
+            for (int i = 0; i < children->size(); i++)
+            {
+                TrieNode *curNode = children->get(i);
+
+                cout << "curNode:" << curNode->data << endl;
+
+                char curChar = curNode->data;
+
+                if (curChar == searchValue)
+                {
+                    return curNode;
+                }
+            }
+            return nullptr;
+        }
+
+        void addChild(char data)
+        {
+            TrieNode *temp = new TrieNode(data);
+            children->add(temp);
+        }
+        void print()
+        {
+            cout << "----------------" << endl;
+            cout << "data: " << data << endl;
+            cout << "Children:" << endl;
+            children->print();
+            cout << "----------------" << endl;
+        }
+    };
+
+public:
+    TrieNode *head;
+    Trie(string dictionaryFile)
+    {
+        cout << "Created new Tri with " << dictionaryFile << endl;
+        char emptyChar = (char)0;
+        TrieNode *temp = new TrieNode(emptyChar);
+        head = temp;
+    }
+
+    bool isWord(string word)
+    {
+        TrieNode *currentNode = head; //start at head
+
+        int n = word.length();
+        char char_array[n + 1];
+        strcpy(char_array, word.c_str());
+
+        int depth = 0;
+        string result = "";
+        char currentLetter = char_array[depth];
+
+        while (currentNode->hasChild(currentLetter))
+        {
+
+            cout
+                << "current letter =" << currentLetter << endl;
+            result.push_back(currentLetter);
+            //traverse
+            currentNode = currentNode->getChild(currentLetter);
+            cout << "new head is:" << endl;
+            currentNode->print();
+            depth++;
+            currentLetter = char_array[depth];
+        }
+        return (result == word);
+    }
+
+    void
+    insertWord(string newWord)
+    {
+        cout << "inserting word:" << newWord << endl;
+        TrieNode *currentNode = head; //start at head
+
+        int n = newWord.length();
+        // declaring character array
+        char char_array[n + 1];
+        // copying the contents of the
+        // string to char array
+        strcpy(char_array, newWord.c_str());
+
+        //place letters in tree
+        for (int i = 0; i < n; i++)
+        {
+            char curLetter = char_array[i];
+            cout << "Placing the letter:" << curLetter << endl;
+
+            bool hasLetter = currentNode->hasChild(curLetter);
+
+            //bool hasLetter = false;
+
+            if (hasLetter)
+            {
+                currentNode = currentNode->getChild(curLetter);
+            }
+            else
+            {
+                currentNode->addChild(curLetter);
+                cout << "added the letter!" << endl;
+                currentNode = currentNode->getChild(curLetter);
+                //add new node and traverse
+            }
+            currentNode->print();
+        }
+    }
+};
+
 int main()
 {
     cout << "running" << endl;
     HashMap dict("dict.txt");
+    Trie tree("dict.txt");
+
+    tree.insertWord("hello");
+
+    cout << "hello "
+         << "is word:" << tree.isWord("hello") << endl;
+    cout << "hell "
+         << "is word:" << tree.isWord("hell") << endl;
+    cout << "seven "
+         << "is word:" << tree.isWord("seven") << endl;
+
+    /*
     int choice;
     while (choice != 0)
     {
@@ -195,5 +414,6 @@ int main()
             }
         }
     }
+    */
     return 0;
 }
