@@ -243,7 +243,7 @@ private:
             {
                 TrieNode *curNode = children->get(i);
 
-                cout << "curNode:" << curNode->data << endl;
+                //   cout << "curNode:" << curNode->data << endl;
 
                 char curChar = curNode->data;
 
@@ -253,6 +253,23 @@ private:
                 }
             }
             return nullptr;
+        }
+
+        int childrenSize()
+        {
+            return children->size();
+        }
+
+        TrieNode *getChild(int index)
+        {
+            if (index >= 0 && index < children->size())
+            {
+                return children->get(index);
+            }
+            else
+            {
+                return nullptr;
+            }
         }
 
         void addChild(char data)
@@ -269,15 +286,76 @@ private:
             cout << "----------------" << endl;
         }
     };
+    void buildDictionary(string dictionaryFile)
+    {
+        ifstream is(dictionaryFile);
+        string line;
+
+        while (getline(is, line))
+        {
+            insertWord(line);
+        }
+    }
+    TrieNode *getTailNode(string word)
+    {
+        TrieNode *currentNode = head; //start at head
+
+        int n = word.length();
+        char char_array[n + 1];
+        strcpy(char_array, word.c_str());
+
+        int depth = 0;
+        string result = "";
+        char currentLetter = char_array[depth];
+
+        while (currentNode->hasChild(currentLetter))
+        {
+
+            // cout
+            //    << "current letter =" << currentLetter << endl;
+            result.push_back(currentLetter);
+            //traverse
+            currentNode = currentNode->getChild(currentLetter);
+            //  cout << "new head is:" << endl;
+            //  currentNode->print();
+            depth++;
+            currentLetter = char_array[depth];
+        }
+        return currentNode;
+    }
+
+    //backtracking function
+    void printCombos(string curString, TrieNode *curNode)
+    {
+
+        //base case
+        if (curNode->hasChild('*'))
+        {
+            cout << curString << endl;
+        }
+        if (curNode->childrenSize() >= 1)
+        {
+            int childrenCount = curNode->childrenSize();
+            // cout << "childrenCount: " << childrenCount << endl;
+            for (int i = 0; i < childrenCount; i++)
+            {
+                TrieNode *newLayer = curNode->getChild(i);
+                char curLetter = newLayer->data;
+                // cout << "curLetter:" << curLetter << endl;
+                string newWord = curString + curLetter;
+                printCombos(newWord, newLayer);
+            }
+        }
+    }
 
 public:
     TrieNode *head;
     Trie(string dictionaryFile)
     {
-        cout << "Created new Tri with " << dictionaryFile << endl;
         char emptyChar = (char)0;
         TrieNode *temp = new TrieNode(emptyChar);
         head = temp;
+        buildDictionary(dictionaryFile);
     }
 
     bool isWord(string word)
@@ -295,23 +373,38 @@ public:
         while (currentNode->hasChild(currentLetter))
         {
 
-            cout
-                << "current letter =" << currentLetter << endl;
+            // cout
+            //    << "current letter =" << currentLetter << endl;
             result.push_back(currentLetter);
             //traverse
             currentNode = currentNode->getChild(currentLetter);
-            cout << "new head is:" << endl;
-            currentNode->print();
+            //  cout << "new head is:" << endl;
+            //  currentNode->print();
             depth++;
             currentLetter = char_array[depth];
         }
-        return (result == word);
+        //makes it so if you put the word "hello"
+        //hell doesnt get picked up as an added word because it doesnt have child '*'
+        if (result == word && currentNode->hasChild('*'))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    void startsWith(string word)
+    {
+        TrieNode *currentNode = getTailNode(word); //start at head
+        printCombos(word, currentNode);
     }
 
     void
     insertWord(string newWord)
     {
-        cout << "inserting word:" << newWord << endl;
+
         TrieNode *currentNode = head; //start at head
 
         int n = newWord.length();
@@ -325,7 +418,7 @@ public:
         for (int i = 0; i < n; i++)
         {
             char curLetter = char_array[i];
-            cout << "Placing the letter:" << curLetter << endl;
+            //cout << "Placing the letter:" << curLetter << endl;
 
             bool hasLetter = currentNode->hasChild(curLetter);
 
@@ -338,32 +431,22 @@ public:
             else
             {
                 currentNode->addChild(curLetter);
-                cout << "added the letter!" << endl;
+                // cout << "added the letter!" << endl;
                 currentNode = currentNode->getChild(curLetter);
                 //add new node and traverse
             }
-            currentNode->print();
+            //currentNode->print();
         }
+        currentNode->addChild('*');
     }
 };
 
 int main()
 {
-    cout << "running" << endl;
     HashMap dict("dict.txt");
     Trie tree("dict.txt");
 
-    tree.insertWord("hello");
-
-    cout << "hello "
-         << "is word:" << tree.isWord("hello") << endl;
-    cout << "hell "
-         << "is word:" << tree.isWord("hell") << endl;
-    cout << "seven "
-         << "is word:" << tree.isWord("seven") << endl;
-
-    /*
-    int choice;
+    int choice = 1;
     while (choice != 0)
     {
         cout << "-----------------------------" << endl;
@@ -413,7 +496,15 @@ int main()
                 cout << word << " is not a word!" << endl;
             }
         }
+        else if (choice == 2)
+        {
+            cout << "Enter word: ";
+            string word;
+            cin >> word;
+            cout << "These are all the words that start with \" " << word << "\"";
+            tree.startsWith(word);
+        }
     }
-    */
+
     return 0;
 }

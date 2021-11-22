@@ -1,0 +1,22 @@
+{
+  "files.associations": {
+    "ostream": "cpp",
+    "__locale": "cpp",
+    "array": "cpp",
+    "filesystem": "cpp",
+    "iomanip": "cpp",
+    "ios": "cpp",
+    "regex": "cpp",
+    "span": "cpp",
+    "string_view": "cpp",
+    "*.tcc": "cpp",
+    "bitset": "cpp",
+    "istream": "cpp",
+    "ranges": "cpp",
+    "sstream": "cpp",
+    "streambuf": "cpp",
+    "syncstream": "cpp",
+    "functional": "cpp",
+    "iostream": "cpp"
+  }
+}
