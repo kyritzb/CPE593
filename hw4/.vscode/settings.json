@@ -4,6 +4,18 @@
     "ostream": "cpp",
     "__node_handle": "cpp",
     "new": "cpp",
-    "iostream": "cpp"
+    "iostream": "cpp",
+    "__locale": "cpp",
+    "__threading_support": "cpp",
+    "bitset": "cpp",
+    "memory": "cpp",
+    "optional": "cpp",
+    "string": "cpp",
+    "string_view": "cpp",
+    "system_error": "cpp",
+    "thread": "cpp",
+    "type_traits": "cpp",
+    "utility": "cpp",
+    "vector": "cpp"
   }
 }

@@ -52,6 +52,19 @@ public:
         }
     }
 
+    int size()
+    {
+        int count = 1;
+        node *current = head;
+
+        while (current != nullptr)
+        {
+            current = current->next;
+            count++;
+        }
+        return count;
+    }
+
     bool has(string search)
     {
         node *current = head;
@@ -94,9 +107,7 @@ private:
 public:
     HashMap(string dictionaryFile)
     {
-        // Initial capacity of hash array
-        capacity = 30;
-        size = 0;
+        capacity = 500000;
         //array of buckets
         arr = new LinkedList *[capacity];
 
@@ -109,10 +120,54 @@ public:
     // for a key
     int hashCode(string key)
     {
-        //return key % capacity;
-        int hashed = (int)key.length();
+        int seed = 131;
+        unsigned long hash = 0;
+        for (int i = 0; i < key.length(); i++)
+        {
+            hash = (hash * seed) + key[i];
+        }
 
-        return hashed;
+        return hash % capacity;
+    }
+
+    void histogram()
+    {
+        int totalWords = 0;
+        int nums[10] = {0}; // initiallize all values to 0
+        for (int i = 0; i < capacity; i++)
+        {
+            int curSize = arr[i]->size();
+            totalWords += curSize;
+
+            if (curSize < 10)
+            {
+                nums[curSize] = nums[curSize] + 1;
+            }
+        }
+
+        cout << "Total words:" << totalWords << endl;
+        cout << "Number of bins:" << capacity << endl;
+        cout << "Collisions" << endl;
+
+        for (int m = 0; m < 10; m++)
+        {
+            cout << "Bins with [" << m << "] collisions " << nums[m] << endl;
+        }
+    }
+
+    void spellCheck(string file)
+    {
+        ifstream is(file);
+        string line;
+
+        cout << "----Words spelt wrong----" << endl;
+        while (getline(is, line))
+        {
+            if (!isWord(line))
+            {
+                cout << line << endl;
+            };
+        }
     }
 
     void insertWord(string newWord)
@@ -454,6 +509,8 @@ int main()
         cout << "-----------------------------" << endl;
         cout << "0) Finish" << endl;
         cout << "1) Test Word" << endl;
+        cout << "2) Histogram" << endl;
+        cout << "3) Spellcheck" << endl;
         cin >> choice;
         if (choice == 1)
         {
@@ -469,6 +526,18 @@ int main()
             {
                 cout << word << " is not a word!" << endl;
             }
+        }
+        else if (choice == 2)
+        {
+            cout << "------Histogram------" << endl;
+            dict.histogram();
+        }
+        else if (choice == 3)
+        {
+            cout << "Please enter the file to spell check: " << endl;
+            string fileName;
+            cin >> fileName;
+            dict.spellCheck(fileName);
         }
     }
     choice = 1;
